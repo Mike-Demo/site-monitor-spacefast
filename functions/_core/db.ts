@@ -96,7 +96,7 @@ const SEED_SITES: Array<[string, string, string]> = [
   ["freshink", "freshink.art", "https://freshink.art/"],
   ["ceoowl", "ceoowl.com", "https://ceoowl.com/"],
   ["dice-roller", "2d20.space", "https://2d20.space/"],
-  ["umami-lite", "umami-lite (SpaceFast)", "https://umami-lite.view.fast/"],
+  ["umami-lite", "umami-lite (SpaceFast)", "https://umami-lite.view.fast/api/health"],
   ["skill-finder-preview", "Skill Finder preview", "https://skill-finder-preview.view.fast/"],
   ["crosspost-preview", "Crosspost preview", "https://crosspost-preview.view.fast/"],
   ["queercade-preview", "QueerCade preview", "https://queercade-preview.view.fast/"],
@@ -109,7 +109,8 @@ export async function seedSites(db: SpacefastDb): Promise<void> {
   for (const [id, name, url] of SEED_SITES) {
     await run(
       db,
-      `INSERT IGNORE INTO sites (id, name, url, enabled, created_at) VALUES (?, ?, ?, 1, ?)`,
+      `INSERT INTO sites (id, name, url, enabled, created_at) VALUES (?, ?, ?, 1, ?)
+       ON DUPLICATE KEY UPDATE name = VALUES(name), url = VALUES(url)`,
       id,
       name,
       url,
