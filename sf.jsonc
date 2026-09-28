@@ -1,0 +1,1 @@
+{"$schema":"https://spacefast.com/schemas/sf.json","access":"public","crons":[{"path":"/api/cron/check","schedule":"*/5 * * * *"}],"name":"site-monitor","runtime":{"database":true,"fetch":true,"kind":"functions"}}
