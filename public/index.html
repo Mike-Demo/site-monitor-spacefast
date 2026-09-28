@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Site Monitor</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #0d1117; color: #e6edf3; margin: 0; padding: 24px; }
+  header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  h1 { font-size: 1.4rem; margin: 0; }
+  .summary { color: #8b949e; font-size: .9rem; }
+  button { background: #1f6feb; color: #fff; border: 0; border-radius: 6px; padding: 8px 14px; cursor: pointer; font-size: .9rem; }
+  button:disabled { opacity: .5; cursor: default; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 14px; cursor: pointer; }
+  .card:hover { border-color: #58a6ff; }
+  .card.down { border-color: #f85149; }
+  .row { display: flex; align-items: center; gap: 8px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot.up { background: #3fb950; } .dot.down { background: #f85149; } .dot.unknown { background: #8b949e; }
+  .name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .url { color: #8b949e; font-size: .8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 4px 0 8px; }
+  .meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: .8rem; color: #8b949e; }
+  .meta b { color: #e6edf3; font-weight: 600; }
+  .badge { display: inline-block; font-size: .72rem; padding: 2px 8px; border-radius: 10px; margin-top: 8px; }
+  .badge.warn { background: #9e6a03; color: #fff; }
+  .badge.bad { background: #da3633; color: #fff; }
+  .badge.info { background: #1f6feb; color: #fff; }
+  #detail { margin-top: 24px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; display: none; }
+  #detail h2 { margin: 0 0 8px; font-size: 1.1rem; }
+  #spark { display: flex; gap: 2px; align-items: flex-end; height: 60px; margin: 12px 0; }
+  #spark div { flex: 1; min-width: 3px; border-radius: 2px; background: #3fb950; }
+  #spark div.down { background: #f85149; }
+  #spark div.slow { background: #d29922; }
+  .err { color: #f85149; font-size: .8rem; }
+  footer { margin-top: 24px; color: #6e7681; font-size: .78rem; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Site Monitor</h1>
+    <div class="summary" id="summary">Loading…</div>
+  </div>
+  <button id="checkNow">Check now</button>
+</header>
+<div class="grid" id="grid"></div>
+<div id="detail">
+  <h2 id="detailName"></h2>
+  <div class="meta" id="detailMeta"></div>
+  <div id="spark"></div>
+  <div id="detailErrors"></div>
+</div>
+<footer>Checks run every 5 minutes. History kept 30 days. SSL expiry via crt.sh.</footer>
+<script>
+const grid = document.getElementById('grid');
+const summary = document.getElementById('summary');
+const detail = document.getElementById('detail');
+let sites = [];
+
+function timeAgo(ts) {
+  if (!ts) return 'never';
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return s + 's ago';
+  if (s < 3600) return Math.floor(s / 60) + 'm ago';
+  return Math.floor(s / 3600) + 'h ago';
+}
+
+function sslBadge(days) {
+  if (days == null) return '';
+  if (days < 14) return `<span class="badge bad">SSL expires in ${days}d</span>`;
+  if (days < 30) return `<span class="badge warn">SSL expires in ${days}d</span>`;
+  return '';
+}
+
+async function load() {
+  const res = await fetch('/api/sites');
+  const data = await res.json();
+  sites = data.sites;
+  const up = sites.filter(s => s.latest && s.latest.ok).length;
+  const down = sites.filter(s => s.latest && !s.latest.ok).length;
+  const unknown = sites.length - up - down;
+  summary.textContent = `${sites.length} sites · ${up} up · ${down} down${unknown ? ' · ' + unknown + ' unchecked' : ''}`;
+  grid.innerHTML = '';
+  for (const s of sites) {
+    const l = s.latest;
+    const cls = !l ? 'unknown' : (l.ok ? 'up' : 'down');
+    const card = document.createElement('div');
+    card.className = 'card' + (l && !l.ok ? ' down' : '');
+    card.innerHTML = `
+      <div class="row"><span class="dot ${cls}"></span><span class="name">${escapeHtml(s.name)}</span></div>
+      <div class="url">${escapeHtml(s.url)}</div>
+      <div class="meta">
+        <span>Uptime 24h <b>${s.uptime_24h == null ? '—' : s.uptime_24h + '%'}</b></span>
+        <span>Resp <b>${l && l.response_ms != null ? l.response_ms + 'ms' : '—'}</b></span>
+        <span>Checked <b>${l ? timeAgo(l.checked_at) : 'never'}</b></span>
+      </div>
+      <div>${l && l.content_changed ? '<span class="badge info">content changed</span> ' : ''}${l ? sslBadge(l.ssl_days_left) : ''}${l && !l.ok ? `<span class="badge bad">${escapeHtml(l.error || ('HTTP ' + l.status_code))}</span>` : ''}</div>`;
+    card.onclick = () => showDetail(s);
+    grid.appendChild(card);
+  }
+}
+
+async function showDetail(s) {
+  detail.style.display = 'block';
+  document.getElementById('detailName').textContent = s.name + ' — ' + s.url;
+  const res = await fetch('/api/history?site=' + encodeURIComponent(s.id) + '&hours=24');
+  const data = await res.json();
+  const pts = data.points;
+  const spark = document.getElementById('spark');
+  spark.innerHTML = '';
+  const maxMs = Math.max(1, ...pts.map(p => p.ms || 0));
+  for (const p of pts) {
+    const d = document.createElement('div');
+    const h = p.ms ? Math.max(6, Math.round((p.ms / maxMs) * 60)) : 6;
+    d.style.height = h + 'px';
+    d.className = !p.ok ? 'down' : (p.ms > 3000 ? 'slow' : '');
+    d.title = new Date(p.at).toLocaleString() + (p.ok ? ` · ${p.ms}ms` : ` · ${p.error || 'down'}`);
+    spark.appendChild(d);
+  }
+  const errs = pts.filter(p => !p.ok).slice(-5).reverse();
+  document.getElementById('detailErrors').innerHTML =
+    errs.map(p => `<div class="err">${new Date(p.at).toLocaleString()} — ${escapeHtml(p.error || ('HTTP ' + p.status))}</div>`).join('');
+  document.getElementById('detailMeta').innerHTML =
+    `<span>Checks (24h) <b>${pts.length}</b></span><span>Uptime <b>${s.uptime_24h == null ? '—' : s.uptime_24h + '%'}</b></span>`;
+  detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+document.getElementById('checkNow').onclick = async (e) => {
+  const btn = e.target;
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+  try {
+    await fetch('/api/check-now', { method: 'POST' });
+    await load();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Check now';
+  }
+};
+
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>
