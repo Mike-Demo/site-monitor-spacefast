@@ -1,0 +1,228 @@
+{
+  "boltSlidesVersion": 1,
+  "boltSlidesId": "11011050-f9d6-4d43-8a9e-3e43af51bbaf",
+  "deck": {
+    "title": "Site Monitor — one calm dashboard",
+    "transition": "fade",
+    "font": "space",
+    "accent": "#3ddc84"
+  },
+  "slides": [
+    {
+      "id": "s1",
+      "position": 0,
+      "layout": "cover",
+      "props": {
+        "kicker": "Site Monitor",
+        "title": "Every site you own. ==One calm dashboard==.",
+        "subtitle": "Lightweight monitoring for a whole fleet of small websites.",
+        "foot": "github.com/Mike-Demo/site-monitor-spacefast"
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Open quietly: this is a small tool for a real, everyday pain — running a dozen small sites and wondering which one is broken right now.",
+      "status": "none"
+    },
+    {
+      "id": "s2",
+      "position": 1,
+      "layout": "contrast",
+      "props": {
+        "kicker": "The problem",
+        "title": "Somebody has to ==tell you== it's down.",
+        "left": {
+          "label": "Today",
+          "title": "You find out by accident",
+          "points": [
+            "A visitor emails: is the site broken?",
+            "A client notices before you do",
+            "Or nobody tells you — at all",
+            "A dozen sites, a dozen hosts, no single view"
+          ]
+        },
+        "right": {
+          "label": "The usual fix",
+          "title": "Enterprise monitoring",
+          "points": [
+            "Built for fleets of thousands",
+            "Priced like it, too",
+            "Overkill for a handful of small sites",
+            "More setup than the sites themselves"
+          ]
+        }
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "The gap: between 'no monitoring' and 'enterprise suite' there is almost nothing. That gap is where Site Monitor lives.",
+      "status": "none"
+    },
+    {
+      "id": "s3",
+      "position": 2,
+      "layout": "bento",
+      "props": {
+        "kicker": "What it does",
+        "title": "One dashboard, ==three answers==.",
+        "tiles": [
+          {
+            "k": "01",
+            "title": "Up",
+            "body": "Sites responding as expected, checked on a schedule.",
+            "c": 2
+          },
+          {
+            "k": "02",
+            "variant": "accent",
+            "title": "Down",
+            "body": "A failed check is flagged the moment it happens — not when a client calls.",
+            "c": 2,
+            "r": 1
+          },
+          {
+            "k": "03",
+            "title": "Changed",
+            "body": "Content or status drift gets surfaced, so silent breakage can't hide.",
+            "c": 2
+          }
+        ]
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Three questions, one screen: what's up, what's down, what changed. That's the whole product promise.",
+      "status": "none"
+    },
+    {
+      "id": "s4",
+      "position": 3,
+      "layout": "bigNumber",
+      "props": {
+        "kicker": "Built for its host",
+        "value": "0",
+        "caption": "background daemons, heavyweight stacks, or server gymnastics — pragmatic checks that fit the platform",
+        "foot": "Designed to run inside SpaceFast's simple static / PHP hosting"
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Site Monitor is shaped by where it runs: SpaceFast's simple static/PHP hosting. Nothing to install, nothing always-on — just checks that fit the platform.",
+      "status": "none"
+    },
+    {
+      "id": "s5",
+      "position": 4,
+      "layout": "steps",
+      "props": {
+        "kicker": "How it works",
+        "title": "From list to ==status view==.",
+        "items": [
+          {
+            "title": "Add your sites",
+            "body": "Point the monitor at each URL in your fleet."
+          },
+          {
+            "title": "It checks on a schedule",
+            "body": "Each site gets pinged and verified — not just reached, actually checked."
+          },
+          {
+            "title": "Results roll up",
+            "body": "Every check lands in one status view for the whole fleet."
+          }
+        ]
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Walk the loop: add sites, scheduled pings with real verification, one roll-up view. Emphasize 'verified' — a ping alone can lie.",
+      "status": "none"
+    },
+    {
+      "id": "s6",
+      "position": 5,
+      "layout": "pillars",
+      "props": {
+        "title": "Small tool, ==complete kit==.",
+        "items": [
+          {
+            "title": "Scheduled checks",
+            "body": "Pings plus content verification on a cadence you choose."
+          },
+          {
+            "title": "Fleet-wide status",
+            "body": "Every site, one glance — up, down, or changed."
+          },
+          {
+            "title": "Change detection",
+            "body": "Silent drift gets surfaced instead of hiding for weeks."
+          },
+          {
+            "title": "Zero extra infra",
+            "body": "No daemons, no stack to babysit — it lives where your sites live."
+          }
+        ]
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Four features, all in service of the same calm. Don't read the tiles — pick the one that matters to this audience and expand.",
+      "status": "none"
+    },
+    {
+      "id": "s7",
+      "position": 6,
+      "layout": "statGrid",
+      "props": {
+        "kicker": "Status",
+        "title": "It's ==real==, and it's open.",
+        "stats": [
+          {
+            "value": "Working",
+            "label": "monitor in production",
+            "caption": "Watching real sites today"
+          },
+          {
+            "value": "Live",
+            "label": "fleet coverage",
+            "caption": "Checks running around the clock"
+          },
+          {
+            "value": "Open",
+            "label": "source on GitHub",
+            "caption": "Read it, run it, fork it"
+          }
+        ]
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Credibility beat: this isn't a concept. It's running, it's watching real sites, and the code is public.",
+      "status": "none"
+    },
+    {
+      "id": "s8",
+      "position": 7,
+      "layout": "cover",
+      "props": {
+        "kicker": "Open source",
+        "title": "Stop finding out ==from your clients==.",
+        "subtitle": "Clone it, point it at your sites, get one calm dashboard.",
+        "foot": "github.com/Mike-Demo/site-monitor-spacefast"
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Close with the repo link on screen. One ask: point it at three of your sites this week.",
+      "status": "none"
+    }
+  ]
+}
